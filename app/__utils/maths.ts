@@ -1,2 +1,4 @@
-export const rapportToUnity = (value: number | undefined) =>
-  Number(value) / 1000;
+import { safeNumber } from "@/app/__utils/utils";
+
+export const rapportToUnit = (value: number | undefined) =>
+  safeNumber(value) / 1000;

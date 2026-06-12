@@ -4,22 +4,25 @@ import { Line, OrbitControls, Text } from "@react-three/drei";
 import { Product } from "@/app/__utils/pxml";
 import * as THREE from "three";
 import { useEffect } from "react";
-import { WallFace } from "@/app/__components/wall";
-import { getWallPosition } from "@/app/__utils/get-wall-position";
+import { WallExtruded } from "@/app/__components/wall";
+import { getWallCorners } from "@/app/__utils/get-wall-position";
+import { rapportToUnit } from "@/app/__utils/maths";
 
 export default function Scene({ files }: { files: Product[] }) {
-  const first = files[0];
-  const { PA, PB, PC, PD } = getWallPosition(first);
+  const file = files[0];
+  const { localVertices, matrix, p1 } = getWallCorners(file);
+  const thickness = rapportToUnit(file.TotalThickness);
 
   return (
     <Canvas className={"size-full"}>
-      <WallFace a={PA} b={PB} c={PC} d={PD} />
-      <MeshPoint position={PA} color={"red"} />
-      <MeshPoint position={PB} color={"green"} />
-      <MeshPoint position={PC} color={"blue"} />
-      <MeshPoint position={PD} color={"yellow"} />
+      <WallExtruded
+        localVertices={localVertices}
+        matrix={matrix}
+        thickness={thickness}
+      />
+      <MeshPoint position={p1} color={"red"} />
 
-      <Helpers target={PA} />
+      <Helpers target={p1} />
     </Canvas>
   );
 }
@@ -166,6 +169,7 @@ const Helpers = ({ target }: { target: THREE.Vector3 }) => (
     >
       Z
     </Text>
+    <ambientLight intensity={0.5} />
     <OrbitControls target={target} />
   </>
 );
